@@ -453,6 +453,28 @@
   
   <!-- Scripts supplémentaires -->
   <script>
+
+    // Vérification de l'installation
+    if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => {
+        console.log('SW enregistré:', reg);
+        // Force la mise à jour si nouveau SW disponible
+        reg.update();
+      });
+  });
+
+  // Détection du statut réseau
+  function updateOnlineStatus() {
+    if (!navigator.onLine) {
+      console.log('Mode hors ligne détecté');
+    }
+  }
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+}
+
     // Affichage conditionnel des sections détaillées
     document.querySelector('input[name="dejaTente"]').addEventListener('change', function(e) {
       document.getElementById('detailsTentative').style.display = 
@@ -505,6 +527,8 @@
       form.addEventListener('change', updateProgress);
       form.addEventListener('input', updateProgress);
     });
+
+
   </script>
 </body>
 </html>

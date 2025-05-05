@@ -1,9 +1,9 @@
-// service-worker.js - Version améliorée et commentée
+// service-worker.js - Version finale pour Android offline
 
-// 1. Configuration de base
-const APP_VERSION = 'v1.2'; // Mettez à jour ce numéro quand vous modifiez les fichiers
-const CACHE_NAME = `migration-app-${APP_VERSION}`;
-const FILES_TO_CACHE = [
+const APP_VERSION = 'v1.3'; // <-- Incrémentez à chaque modification
+const CACHE_NAME = `migration-cache-${APP_VERSION}`;
+const OFFLINE_PAGE = '/offline.html';
+const CACHE_FILES = [
   '/',
   '/index.html',
   '/css/bootstrap.min.css',
@@ -13,72 +13,79 @@ const FILES_TO_CACHE = [
   '/pwa/icon-512.png'
 ];
 
-// 2. Installation - Mise en cache quand l'utilisateur installe l'app
+// 1. Installation - Cache les ressources critiques + page offline
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('[Service Worker] Mise en cache des ressources');
-        return cache.addAll(FILES_TO_CACHE);
-      })
-      .catch(err => {
-        console.error('[Service Worker] Erreur de cache:', err);
+        console.log('[SW] Cache initialisé');
+        // Cache les fichiers essentiels
+        cache.addAll(CACHE_FILES)
+          // Ajoute la page offline en supplément
+          .then(() => cache.add(OFFLINE_PAGE))
+          .catch(err => console.error('[SW] Erreur cache.addAll:', err));
       })
   );
-  self.skipWaiting(); // Prend le contrôle immédiatement
+  self.skipWaiting();
 });
 
-// 3. Activation - Nettoie les anciennes versions
+// 2. Activation - Nettoyage des anciens caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cache => {
           if (cache !== CACHE_NAME) {
-            console.log('[Service Worker] Suppression ancien cache:', cache);
+            console.log('[SW] Suppression ancien cache:', cache);
             return caches.delete(cache);
           }
         })
       );
     })
   );
-  console.log('[Service Worker] Prêt à fonctionner offline!');
-  self.clients.claim(); // Prend le contrôle de tous les clients
+  self.clients.claim();
 });
 
-// 4. Stratégie de cache : "Cache First, then Network"
+// 3. Stratégie de cache améliorée pour Android
 self.addEventListener('fetch', event => {
-  // Ne pas intercepter les requêtes de données
-  if (event.request.url.includes('/api/') || event.request.method !== 'GET') {
+  // Exclusion des requêtes non-GET et des API externes
+  if (event.request.method !== 'GET' || 
+      event.request.url.startsWith('http') && !event.request.url.includes(location.origin)) {
     return fetch(event.request);
   }
 
   event.respondWith(
     caches.match(event.request)
       .then(cachedResponse => {
-        // Renvoie la version en cache si disponible
+        // Renvoie le cache si disponible
         if (cachedResponse) {
           return cachedResponse;
         }
-        
-        // Sinon, va chercher sur le réseau
-        return fetch(event.request).then(response => {
-          // Option: mettre en cache les nouvelles ressources
-          if (!response || response.status !== 200) {
-            return response;
-          }
-          
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
+
+        // Sinon, tente le réseau avec fallback offline
+        return fetch(event.request)
+          .then(networkResponse => {
+            // Mise en cache des nouvelles ressources (sauf HTML)
+            if (networkResponse.ok && 
+                !networkResponse.url.endsWith('.html') &&
+                !networkResponse.url.includes('chrome-extension')) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME)
+                .then(cache => cache.put(event.request, responseToCache));
+            }
+            return networkResponse;
+          })
+          .catch(async () => {
+            // Fallback 1: Page offline pour les routes principales
+            if (event.request.mode === 'navigate') {
+              return caches.match(OFFLINE_PAGE);
+            }
+            // Fallback 2: Placeholder pour les images
+            if (event.request.destination === 'image') {
+              return caches.match('/pwa/icon-512.png');
+            }
+            return new Response('', { status: 503 });
           });
-          
-          return response;
-        });
       })
   );
 });
-
-// 5. Gestion du téléchargement JSON (à garder dans votre script.js principal)
-// Cette partie ne devrait PAS être dans le service-worker!
-// Déplacez-la dans script.js à la place

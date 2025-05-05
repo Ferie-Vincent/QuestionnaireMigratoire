@@ -77,24 +77,33 @@ async function collectFormData() {
  */
 function saveToLocalStorage(newData) {
   try {
-    // Initialiser si vide
-    if (!localStorage.getItem('reponses')) {
-      localStorage.setItem('reponses', JSON.stringify([]));
+    // Initialisation garantie d'un tableau vide
+    let storedData = [];
+    const stored = localStorage.getItem('reponses');
+    
+    if (stored) {
+      try {
+        storedData = JSON.parse(stored);
+        if (!Array.isArray(storedData)) throw new Error("Invalid data");
+      } catch (e) {
+        console.error("Corruption des données, réinitialisation...");
+        storedData = [];
+      }
     }
 
-    // Récupérer données existantes
-    const storedData = JSON.parse(localStorage.getItem('reponses'));
+    // Ajout des nouvelles données
+    storedData.push(newData);
     
-    // Limiter à 100 entrées
-    const updatedData = [...storedData, newData].slice(-100);
-    
-    // Sauvegarder
-    localStorage.setItem('reponses', JSON.stringify(updatedData));
-    return updatedData;
-  } catch (error) {
-    if (error.name === 'QuotaExceededError') {
-      throw new Error("Espace de stockage plein. Exportez et nettoyez les données.");
+    // Limitation à 100 entrées
+    if (storedData.length > 100) {
+      storedData = storedData.slice(-100);
     }
+    
+    // Sauvegarde sécurisée
+    localStorage.setItem('reponses', JSON.stringify(storedData));
+    return storedData;
+  } catch (error) {
+    console.error("Erreur sauvegarde:", error);
     throw error;
   }
 }
