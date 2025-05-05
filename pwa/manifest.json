@@ -2,7 +2,7 @@
   "name": "Questionnaire Migration",
   "short_name": "MigQuest",
   "id": "/?source=pwa",
-  "start_url": "/index.html",
+  "start_url": "/QuestionnaireMigratoire/index.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
