@@ -1,7 +1,6 @@
 /**
  * 📝 script.js - Gestionnaire avancé de formulaire avec :
- * - Sauvegarde locale (localStorage + IndexedDB)
- * - Synchronisation vers Google Sheets
+ * - Sauvegarde locale (localStorage)
  * - Notifications enrichies
  * - Gestion hors-ligne
  * 
@@ -14,28 +13,20 @@
 
 // Configuration
 const CONFIG = {
-  GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby6ip-Exm_3tLjC1lnxc8ShI4QzNUoIKdr59BANYTwsB6tpIPt43vO1LGF0I4I47NmOHQ/exec',
   MAX_LOCAL_STORAGE_ENTRIES: 100,
   MAX_IMAGE_SIZE_MB: 2,
-  SYNC_BATCH_SIZE: 5,
-  SYNC_INTERVAL: 30000,
   NOTIFICATION_TIMEOUT: 5000
 };
 
 // Messages
 const MESSAGES = {
-  SUCCESS: "✅ Données synchronisées avec succès !",
-  ERROR_SYNC: "⚠️ Échec de la synchronisation",
+  SUCCESS: "✅ Données enregistrées avec succès !",
   ERROR_PHOTO_SIZE: "La photo dépasse 2MB",
   SAVE_SUCCESS: "✅ Enregistrement réussi !",
   SAVE_ERROR: "❌ Erreur lors de l'enregistrement",
-  OFFLINE_SAVE: "📶 Données sauvegardées localement",
   STORAGE_FULL: "⚠️ Espace de stockage insuffisant",
   FORM_SUBMITTED: "📋 Formulaire transmis avec succès"
 };
-
-// État global
-let isSyncing = false;
 
 // 🔄 Convertit un fichier image en base64
 async function fileToBase64(file) {
@@ -81,7 +72,6 @@ async function collectFormData() {
     id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     timestamp: new Date().toISOString(),
     device: navigator.userAgent,
-    synced: false,
     location: await getLocation()
   };
 
@@ -172,43 +162,6 @@ function showNotification(message, type = 'success') {
   }
 }
 
-// ☁️ Synchronisation avec Google Sheets
-async function syncDataWithGoogleSheet() {
-  if (isSyncing) return false;
-  isSyncing = true;
-
-  try {
-    const data = JSON.parse(localStorage.getItem('reponses') || '[]')
-      .filter(entry => !entry._metadata?.synced);
-
-    if (!data.length) return true;
-
-    const batch = data.slice(0, CONFIG.SYNC_BATCH_SIZE);
-    const requests = batch.map(entry => 
-      fetch(CONFIG.GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(entry)
-      }).then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        entry._metadata.synced = true;
-        return entry;
-      })
-    );
-
-    await Promise.all(requests);
-    localStorage.setItem('reponses', JSON.stringify(data));
-    showNotification(MESSAGES.SUCCESS);
-    return true;
-  } catch (error) {
-    console.error("Erreur synchronisation:", error);
-    showNotification(`${MESSAGES.ERROR_SYNC}: ${error.message}`, 'error');
-    return false;
-  } finally {
-    isSyncing = false;
-  }
-}
-
 // ▶️ Initialisation
 async function initApp() {
   const form = document.getElementById('questionnaireForm');
@@ -247,8 +200,6 @@ async function initApp() {
       showNotification(MESSAGES.FORM_SUBMITTED);
       form.reset();
       resetProgressBar();
-
-      if (navigator.onLine) await syncDataWithGoogleSheet();
     } catch (error) {
       showNotification(
         `${error.message.includes('QuotaExceeded') ? MESSAGES.STORAGE_FULL : MESSAGES.SAVE_ERROR}: ${error.message}`,
@@ -257,11 +208,7 @@ async function initApp() {
     }
   });
 
-  // ▼ Autres initialisations ▼
-  setInterval(() => {
-    if (navigator.onLine && !isSyncing) syncDataWithGoogleSheet();
-  }, CONFIG.SYNC_INTERVAL);
-
+  // Demander la permission pour les notifications
   if ('Notification' in window) {
     Notification.requestPermission();
   }
@@ -276,88 +223,6 @@ function validateAllFields(form) {
     
     field.classList.toggle('is-valid', isValid);
     field.classList.toggle('is-invalid', !isValid);
-  });
-}
-
-
-  // Synchronisation périodique
-  setInterval(() => {
-    if (navigator.onLine && !isSyncing) syncDataWithGoogleSheet();
-  }, CONFIG.SYNC_INTERVAL);
-
-  // Demander la permission pour les notifications
-  if ('Notification' in window) {
-    Notification.requestPermission();
-  }
-
-  const form = document.getElementById('questionnaireForm');
-  if (form) {
-    // Gestion de la soumission
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      // Validation visuelle
-      validateFormFields(form);
-      
-      if (!form.checkValidity()) {
-        form.classList.add('was-validated');
-        scrollToFirstInvalid();
-        return;
-      }
-
-      try {
-        const formData = await collectFormData();
-        const savedData = saveToLocalStorage(formData);
-        showNotification(MESSAGES.FORM_SUBMITTED);
-        form.reset();
-        resetProgressBar();
-      } catch (error) {
-        showNotification(`${MESSAGES.SAVE_ERROR}: ${error.message}`, 'error');
-      }
-    });
-  }
-
-  if (form) {
-    form.querySelectorAll('input, select, textarea').forEach(field => {
-      field.addEventListener('input', () => {
-        if (field.hasAttribute('required')) {
-          const isValid = field.checkValidity(); // Utilise la validation native
-          field.classList.toggle('is-valid', isValid);
-          field.classList.toggle('is-invalid', !isValid);
-          
-          // Cas spécial pour les groupes de radios/checkbox
-          if (field.type === 'radio' || field.type === 'checkbox') {
-            validateRadioGroup(field.name);
-          }
-        }
-      });
-    });
-  }
-
-function validateFormFields(form) {
-  const fields = form.querySelectorAll('input, select, textarea');
-  
-  fields.forEach(field => {
-      if (field.hasAttribute('required')) {
-          const isValid = field.value.trim() !== '';
-          
-          // Pour les radios/checkboxes
-          if (field.type === 'radio' || field.type === 'checkbox') {
-              const name = field.name;
-              const group = form.querySelectorAll(`[name="${name}"]`);
-              const isGroupValid = [...group].some(radio => radio.checked);
-              
-              group.forEach(radio => {
-                  radio.classList.toggle('is-valid', isGroupValid);
-                  radio.classList.toggle('is-invalid', !isGroupValid);
-              });
-          } 
-          // Pour les autres champs
-          else {
-              field.classList.toggle('is-valid', isValid);
-              field.classList.toggle('is-invalid', !isValid);
-          }
-      }
   });
 }
 
