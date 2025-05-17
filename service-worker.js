@@ -1,6 +1,6 @@
 // service-worker.js - Service Worker optimisé pour DAOSAR (version corrigée)
 const CACHE_NAME = 'daosar-cache-v1';
-const OFFLINE_URL = '/offline.html';
+const OFFLINE_URL = '/QuestionnaireMigratoire/offline.html';
 
 const ESSENTIAL_URLS = [
   '/',
