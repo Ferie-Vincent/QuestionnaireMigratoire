@@ -1,26 +1,3 @@
-// questionnaire.js - Version corrigée et optimisée
-
-/**
- * 📍 Obtient la géolocalisation et remplit les champs correspondants
- */
-async function getLocation() {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
-      reject(new Error("Géolocalisation non supportée"));
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        document.getElementById('latitude').value = position.coords.latitude.toFixed(6);
-        document.getElementById('longitude').value = position.coords.longitude.toFixed(6);
-        resolve();
-      },
-      error => reject(new Error(`Erreur géolocalisation: ${error.message}`)),
-      { timeout: 10000, enableHighAccuracy: true }
-    );
-  });
-}
 
 /**
  * 🔄 Convertit un fichier image en base64
@@ -195,4 +172,9 @@ if (document.readyState === 'complete') {
   initApp();
 } else {
   document.addEventListener('DOMContentLoaded', initApp);
+}
+
+function logout() {
+  sessionStorage.removeItem('daosar_session');
+  window.location.href = 'login.html';
 }

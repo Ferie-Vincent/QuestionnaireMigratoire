@@ -2,212 +2,207 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Données Migration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tableau de bord - DAOSAR</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  <style>
-    :root {
-      --primary-color: #4e73df;
-      --secondary-color: #f8f9fc;
-    }
-    
-    body {
-      background-color: #f5f7fa;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    .header-card {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      margin-bottom: 2rem;
-    }
-    
-    .table-container {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-    }
-    
-    .table-responsive {
-      overflow-x: auto;
-    }
-    
-    .table {
-      margin-bottom: 0;
-    }
-    
-    .table thead th {
-      background-color: var(--primary-color);
-      color: white;
-      font-weight: 600;
-      border-bottom: none;
-      position: sticky;
-      top: 0;
-    }
-    
-    .table tbody tr {
-      transition: all 0.2s;
-    }
-    
-    .table tbody tr:hover {
-      background-color: rgba(78, 115, 223, 0.05);
-    }
-    
-    .table td, .table th {
-      vertical-align: middle;
-      padding: 12px 15px;
-    }
-    
-    .table td {
-      border-top: 1px solid #e9ecef;
-    }
-    
-    .badge-info {
-      background-color: #e1f0ff;
-      color: var(--primary-color);
-      font-weight: 500;
-      padding: 5px 10px;
-      border-radius: 8px;
-    }
-    
-    .img-thumbnail {
-      max-width: 80px;
-      max-height: 80px;
-      border-radius: 8px;
-      object-fit: cover;
-      border: 1px solid #e9ecef;
-    }
-    
-    .no-photo {
-      color: #6c757d;
-      font-style: italic;
-      font-size: 0.9rem;
-    }
-    
-    .text-truncate {
-      max-width: 200px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .text-truncate:hover {
-      white-space: normal;
-      overflow: visible;
-      position: absolute;
-      z-index: 100;
-      background: white;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      max-width: 300px;
-    }
-    
-    .pagination .page-item.active .page-link {
-      background-color: var(--primary-color);
-      border-color: var(--primary-color);
-    }
-    
-    .pagination .page-link {
-      color: var(--primary-color);
-    }
-    
-    .page-info {
-      font-size: 0.9rem;
-      color: #6c757d;
-    }
-    
-    @media (max-width: 768px) {
-      .table td, .table th {
-        padding: 8px 10px;
-        font-size: 0.9rem;
-      }
-      
-      .img-thumbnail {
-        max-width: 60px;
-        max-height: 60px;
-      }
-      
-      h1 {
-        font-size: 1.5rem;
-      }
-      
-      .pagination .page-item .page-link {
-        padding: 0.375rem 0.5rem;
-        font-size: 0.8rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="css/styles.css">
+
 </head>
 <body>
-  <div class="container py-4">
-    <div class="header-card p-4 mb-4">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <h1 class="h3 mb-2"><i class="bi bi-table me-2"></i> Données sur la Migration</h1>
-          <p class="text-muted mb-0">Visualisation des réponses au questionnaire</p>
+
+  <script>
+    if (!sessionStorage.getItem('daosar_session')) {
+      window.location.href = 'login.html';
+    }
+  </script>
+
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div class="sidebar-header d-flex justify-content-between align-items-center">
+      <span class="logo-daosar menu-text">DAOSAR</span>
+      <button type="button" id="sidebarCollapse" class="btn">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+    
+    <ul class="sidebar-menu">
+      <li class="active">
+        <a href="dashboard.html">
+          <i class="bi bi-speedometer2 menu-icon"></i>
+          <span class="menu-text">Tableau de bord</span>
+        </a>
+      </li>
+      <li>
+        <a href="index.html">
+          <i class="bi bi-file-earmark-text menu-icon"></i>
+          <span class="menu-text">Nouveau formulaire</span>
+        </a>
+      </li>
+      <li>
+        <a href="parametres.html">
+          <i class="bi bi-gear menu-icon"></i>
+          <span class="menu-text">Paramètres</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" id="logout-link">
+          <i class="bi bi-box-arrow-left menu-icon"></i>
+          <span class="menu-text">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <div id="main-content">
+    <div class="container py-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="bi bi-speedometer2 me-2"></i> Tableau de bord</h2>
+        <button class="btn btn-primary" id="export-btn">
+          <i class="bi bi-download me-1"></i> Exporter les données
+        </button>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h6 class="text-muted">Total Réponses</h6>
+                  <h3 id="total-responses">0</h3>
+                </div>
+                <div class="stat-icon">
+                  <i class="bi bi-people-fill"></i>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <span class="badge bg-primary rounded-pill" id="count-badge">0 réponses</span>
+        
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h6 class="text-muted">Hommes</h6>
+                  <h3 id="male-count">0</h3>
+                </div>
+                <div class="stat-icon">
+                  <i class="bi bi-gender-male"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h6 class="text-muted">Femmes</h6>
+                  <h3 id="female-count">0</h3>
+                </div>
+                <div class="stat-icon">
+                  <i class="bi bi-gender-female"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+          <div class="card stat-card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h6 class="text-muted">Intentions</h6>
+                  <h3 id="intention-count">0</h3>
+                </div>
+                <div class="stat-icon">
+                  <i class="bi bi-globe"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="bi bi-table me-2"></i> Dernières réponses</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover" id="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nom</th>
+                  <th>Sexe</th>
+                  <th>Âge</th>
+                  <th>Profession</th>
+                  <th>Intention</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+                <!-- Data will be inserted here -->
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Pagination -->
+          <nav aria-label="Page navigation" class="mt-3">
+            <ul class="pagination justify-content-center" id="pagination">
+              <!-- Pagination will be inserted here -->
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="row mt-4">
+        <div class="col-md-6 mb-3">
+          <div class="card h-100">
+            <div class="card-header">
+              <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i> Répartition par âge</h5>
+            </div>
+            <div class="card-body">
+              <canvas id="ageChart"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+          <div class="card h-100">
+            <div class="card-header">
+              <h5 class="mb-0"><i class="bi bi-pie-chart me-2"></i> Intentions de migration</h5>
+            </div>
+            <div class="card-body">
+              <canvas id="intentionChart"></canvas>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="table-container">
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Sexe</th>
-              <th>Âge</th>
-              <th>Études</th>
-              <th>Profession</th>
-              <th>Connaissance</th>
-              <th>Moyens</th>
-              <th>Expérience</th>
-              <th>Intention</th>
-              <th>Photo</th>
-            </tr>
-          </thead>
-          <tbody id="table-body">
-            <!-- Les données seront insérées ici -->
-          </tbody>
-        </table>
-      </div>
-      
-      <!-- Pagination -->
-      <div class="d-flex justify-content-between align-items-center p-3">
-        <div class="page-info" id="page-info">Page 1 sur 1</div>
-        <nav aria-label="Page navigation">
-          <ul class="pagination mb-0" id="pagination">
-            <!-- Les boutons de pagination seront générés ici -->
-          </ul>
-        </nav>
-      </div>
-    </div>
-
-    <div class="alert alert-info mt-4 d-flex align-items-center">
-      <i class="bi bi-info-circle-fill me-2"></i>
-      <div>
-        <strong>Astuce :</strong> Cliquez sur une ligne pour voir les détails complets.
-      </div>
-    </div>
-
-    <div id="error-message" class="alert alert-danger mt-4 d-none"></div>
   </div>
 
-  <!-- Modal pour afficher le contenu complet -->
-  <div class="modal fade" id="contentModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+  <!-- Modal for details -->
+  <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modalTitle">Détails</h5>
+          <h5 class="modal-title">Détails de la réponse</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body" id="modalBody">
-          <!-- Contenu dynamique -->
+        <div class="modal-body" id="modal-content">
+          <!-- Content will be loaded here -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
@@ -216,230 +211,303 @@
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // Variables globales
+    // Variables
     let currentPage = 1;
     const itemsPerPage = 10;
     let allData = [];
-    
-    // Chargement du fichier JSON
-    fetch("data/data.json")
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Impossible de charger le fichier JSON. Vérifiez que le fichier existe bien.");
-        }
-        return response.json();
-      })
-      .then(data => {
-        allData = data;
-        const countBadge = document.getElementById("count-badge");
-        
-        // Mettre à jour le badge de comptage
-        countBadge.textContent = `${data.length} ${data.length > 1 ? 'réponses' : 'réponse'}`;
-        
-        // Initialiser la pagination
-        setupPagination(allData);
-        displayPage(currentPage, allData);
-      })
-      .catch(error => {
-        const errorDiv = document.getElementById("error-message");
-        errorDiv.textContent = error.message;
-        errorDiv.classList.remove("d-none");
-      });
-    
-    // Fonction pour afficher une page spécifique
-    function displayPage(page, data) {
-      const tableBody = document.getElementById("table-body");
+    let ageChart, intentionChart;
+
+    // Load data from localStorage
+    function loadData() {
+      const storedData = localStorage.getItem('reponses');
+      allData = storedData ? JSON.parse(storedData) : [];
+      
+      // Update stats
+      updateStats();
+      
+      // Render table
+      renderTable();
+      
+      // Render charts
+      renderCharts();
+    }
+
+    // Update statistics
+    function updateStats() {
+      document.getElementById('total-responses').textContent = allData.length;
+      
+      const maleCount = allData.filter(item => item.sexe === 'Homme').length;
+      document.getElementById('male-count').textContent = maleCount;
+      
+      const femaleCount = allData.filter(item => item.sexe === 'Femme').length;
+      document.getElementById('female-count').textContent = femaleCount;
+      
+      const intentionCount = allData.filter(item => item.intentionMigrer === 'Oui').length;
+      document.getElementById('intention-count').textContent = intentionCount;
+    }
+
+    // Render data table
+    function renderTable() {
+      const tableBody = document.getElementById('table-body');
       tableBody.innerHTML = '';
       
-      const startIndex = (page - 1) * itemsPerPage;
-      const endIndex = Math.min(startIndex + itemsPerPage, data.length);
-      const pageData = data.slice(startIndex, endIndex);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, allData.length);
       
-      // Afficher les données de la page
-      pageData.forEach((item, index) => {
-        const globalIndex = startIndex + index;
-        const tr = document.createElement("tr");
-        
-        // Formatage des données pour l'affichage
-        const moyensInfo = Array.isArray(item.moyensInfo) ? item.moyensInfo.join(', ') : item.moyensInfo || 'N/A';
+      for (let i = startIndex; i < endIndex; i++) {
+        const item = allData[i];
+        const tr = document.createElement('tr');
         
         tr.innerHTML = `
-          <td>${globalIndex + 1}</td>
-          <td><span class="badge-info">${item.sexe || "N/A"}</span></td>
-          <td>${item.age || "N/A"}</td>
-          <td>${item.niveauEtude || "N/A"}</td>
-          <td>${item.situationPro || "N/A"}</td>
-          <td>${item.entenduMigration || "N/A"}</td>
-          <td>${moyensInfo}</td>
-          <td>${item.dejaTente || "N/A"}</td>
-          <td>${item.intentionMigrer || "N/A"}</td>
+          <td>${i + 1}</td>
+          <td>${item.nom || 'N/A'} ${item.prenom || ''}</td>
+          <td>${item.sexe || 'N/A'}</td>
+          <td>${item.age || 'N/A'}</td>
+          <td>${item.situationPro || 'N/A'}</td>
+          <td>${item.intentionMigrer || 'N/A'}</td>
+          <td>${item._metadata?.timestamp ? new Date(item._metadata.timestamp).toLocaleDateString() : 'N/A'}</td>
           <td>
-            ${item.photo ? 
-              `<img src="${item.photo}" alt="Photo" class="img-thumbnail">` : 
-              `<span class="no-photo">Aucune</span>`}
+            <button class="btn btn-sm btn-outline-primary view-btn" data-index="${i}">
+              <i class="bi bi-eye"></i>
+            </button>
           </td>
         `;
         
-        // Ajouter un événement pour afficher les détails complets
-        tr.addEventListener('click', () => showDetails(item));
         tableBody.appendChild(tr);
-      });
+      }
       
-      // Mettre à jour l'info de pagination
-      document.getElementById("page-info").textContent = 
-        `Page ${page} sur ${Math.ceil(data.length / itemsPerPage)} - ${data.length} éléments`;
+      // Setup pagination
+      setupPagination();
+      
+      // Add event listeners to view buttons
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          showDetails(index);
+        });
+      });
     }
-    
-    // Fonction pour configurer la pagination
-    function setupPagination(data) {
-      const pagination = document.getElementById("pagination");
+
+    // Setup pagination
+    function setupPagination() {
+      const pagination = document.getElementById('pagination');
       pagination.innerHTML = '';
       
-      const totalPages = Math.ceil(data.length / itemsPerPage);
+      const totalPages = Math.ceil(allData.length / itemsPerPage);
       
-      // Bouton Précédent
-      const prevLi = document.createElement("li");
+      // Previous button
+      const prevLi = document.createElement('li');
       prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-      prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>`;
+      prevLi.innerHTML = `
+        <a class="page-link" href="#" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      `;
       prevLi.addEventListener('click', (e) => {
         e.preventDefault();
         if (currentPage > 1) {
           currentPage--;
-          displayPage(currentPage, data);
-          setupPagination(data);
+          renderTable();
         }
       });
       pagination.appendChild(prevLi);
       
-      // Boutons de pages
-      const maxVisiblePages = 5;
-      let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-      
-      if (endPage - startPage + 1 < maxVisiblePages) {
-        startPage = Math.max(1, endPage - maxVisiblePages + 1);
-      }
-      
-      if (startPage > 1) {
-        const firstLi = document.createElement("li");
-        firstLi.className = "page-item";
-        firstLi.innerHTML = `<a class="page-link" href="#">1</a>`;
-        firstLi.addEventListener('click', (e) => {
-          e.preventDefault();
-          currentPage = 1;
-          displayPage(currentPage, data);
-          setupPagination(data);
-        });
-        pagination.appendChild(firstLi);
-        
-        if (startPage > 2) {
-          const ellipsisLi = document.createElement("li");
-          ellipsisLi.className = "page-item disabled";
-          ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
-          pagination.appendChild(ellipsisLi);
-        }
-      }
-      
-      for (let i = startPage; i <= endPage; i++) {
-        const pageLi = document.createElement("li");
+      // Page buttons
+      for (let i = 1; i <= totalPages; i++) {
+        const pageLi = document.createElement('li');
         pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
         pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
         pageLi.addEventListener('click', (e) => {
           e.preventDefault();
           currentPage = i;
-          displayPage(currentPage, data);
-          setupPagination(data);
+          renderTable();
         });
         pagination.appendChild(pageLi);
       }
       
-      if (endPage < totalPages) {
-        if (endPage < totalPages - 1) {
-          const ellipsisLi = document.createElement("li");
-          ellipsisLi.className = "page-item disabled";
-          ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
-          pagination.appendChild(ellipsisLi);
-        }
-        
-        const lastLi = document.createElement("li");
-        lastLi.className = "page-item";
-        lastLi.innerHTML = `<a class="page-link" href="#">${totalPages}</a>`;
-        lastLi.addEventListener('click', (e) => {
-          e.preventDefault();
-          currentPage = totalPages;
-          displayPage(currentPage, data);
-          setupPagination(data);
-        });
-        pagination.appendChild(lastLi);
-      }
-      
-      // Bouton Suivant
-      const nextLi = document.createElement("li");
+      // Next button
+      const nextLi = document.createElement('li');
       nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-      nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>`;
+      nextLi.innerHTML = `
+        <a class="page-link" href="#" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      `;
       nextLi.addEventListener('click', (e) => {
         e.preventDefault();
         if (currentPage < totalPages) {
           currentPage++;
-          displayPage(currentPage, data);
-          setupPagination(data);
+          renderTable();
         }
       });
       pagination.appendChild(nextLi);
     }
-    
-    // Fonction pour afficher les détails complets dans une modal
-    function showDetails(item) {
-      const modalTitle = document.getElementById("modalTitle");
-      const modalBody = document.getElementById("modalBody");
+
+    // Show details modal
+    function showDetails(index) {
+      const item = allData[index];
+      const modalContent = document.getElementById('modal-content');
       
-      modalTitle.textContent = `Détails de la réponse #${item.id || ''}`;
-      
-      modalBody.innerHTML = `
-        <div class="mb-3">
-          <h6>Informations générales</h6>
-          <p><strong>Sexe :</strong> ${item.sexe || "N/A"}</p>
-          <p><strong>Âge :</strong> ${item.age || "N/A"}</p>
-          <p><strong>Niveau d'étude :</strong> ${item.niveauEtude || "N/A"}</p>
-          <p><strong>Situation professionnelle :</strong> ${item.situationPro || "N/A"}</p>
+      modalContent.innerHTML = `
+        <div class="row">
+          <div class="col-md-6">
+            <h6>Informations personnelles</h6>
+            <p><strong>Nom complet:</strong> ${item.nom || 'N/A'} ${item.prenom || ''}</p>
+            <p><strong>Sexe:</strong> ${item.sexe || 'N/A'}</p>
+            <p><strong>Âge:</strong> ${item.age || 'N/A'}</p>
+            <p><strong>Téléphone:</strong> ${item.telephone || 'N/A'}</p>
+            <p><strong>Profession:</strong> ${item.situationPro || 'N/A'}</p>
+            <p><strong>Niveau d'études:</strong> ${item.niveauEtude || 'N/A'}</p>
+          </div>
+          
+          <div class="col-md-6">
+            <h6>Migration</h6>
+            <p><strong>Déjà tenté:</strong> ${item.dejaTente || 'N/A'}</p>
+            ${item.dejaTente === 'Oui' ? `
+              <p><strong>Année tentative:</strong> ${item.anneeTentative || 'N/A'}</p>
+              <p><strong>Destination:</strong> ${item.destinationTentative || 'N/A'}</p>
+              <p><strong>Raison échec:</strong> ${item.raisonEchec || 'N/A'}</p>
+            ` : ''}
+            <p><strong>Intention migrer:</strong> ${item.intentionMigrer || 'N/A'}</p>
+            ${item.intentionMigrer === 'Oui' ? `
+              <p><strong>Destination envisagée:</strong> ${item.destinationEnvisagee || 'N/A'}</p>
+              <p><strong>Méthode envisagée:</strong> ${item.methodeEnvisagee || 'N/A'}</p>
+              <p><strong>Raisons:</strong> ${item.raisonsMigration || 'N/A'}</p>
+            ` : ''}
+          </div>
         </div>
         
-        <div class="mb-3">
-          <h6>Connaissance migration</h6>
-          <p><strong>Déjà entendu parler :</strong> ${item.entenduMigration || "N/A"}</p>
-          <p><strong>Moyens d'information :</strong> ${Array.isArray(item.moyensInfo) ? item.moyensInfo.join(', ') : item.moyensInfo || 'N/A'}</p>
-          <p><strong>Autres moyens :</strong> ${item.moyensAutres || "N/A"}</p>
-        </div>
-        
-        <div class="mb-3">
-          <h6>Expérience migratoire</h6>
-          <p><strong>Déjà tenté :</strong> ${item.dejaTente || "N/A"}</p>
-          <p><strong>Intention de migrer :</strong> ${item.intentionMigrer || "N/A"}</p>
-        </div>
-        
-        <div class="mb-3">
-          <h6>Raisons de migration</h6>
-          <p>${item.raisonsMigration || "N/A"}</p>
-        </div>
-        
-        <div>
-          <h6>Solutions proposées</h6>
-          <p>${item.solutions || "N/A"}</p>
+        <div class="row mt-3">
+          <div class="col-12">
+            <h6>Recommandations</h6>
+            <p><strong>Raisons migration:</strong> ${item.raisonsMigration || 'N/A'}</p>
+            <p><strong>Solutions proposées:</strong> ${item.solutions || 'N/A'}</p>
+            <p><strong>Suggestions autorités:</strong> ${item.suggestions || 'N/A'}</p>
+          </div>
         </div>
         
         ${item.photo ? `
-        <div class="mt-3 text-center">
-          <img src="${item.photo}" alt="Photo" class="img-fluid rounded" style="max-height: 300px;">
+        <div class="row mt-3">
+          <div class="col-12 text-center">
+            <img src="${item.photo}" alt="Photo" class="img-fluid rounded" style="max-height: 200px;">
+          </div>
         </div>
         ` : ''}
       `;
       
-      // Afficher la modal
-      const modal = new bootstrap.Modal(document.getElementById('contentModal'));
+      const modal = new bootstrap.Modal(document.getElementById('detailModal'));
       modal.show();
     }
+
+    // Render charts
+    function renderCharts() {
+      // Age distribution chart
+      const ageCtx = document.getElementById('ageChart').getContext('2d');
+      const ageGroups = ['Moins de 18 ans', '18-24 ans', '25-30 ans', 'Plus de 30 ans'];
+      const ageData = ageGroups.map(group => 
+        allData.filter(item => item.age === group).length
+      );
+      
+      if (ageChart) ageChart.destroy();
+      ageChart = new Chart(ageCtx, {
+        type: 'bar',
+        data: {
+          labels: ageGroups,
+          datasets: [{
+            label: 'Nombre de personnes',
+            data: ageData,
+            backgroundColor: [
+              'rgba(246, 133, 31, 0.7)',
+              'rgba(0, 166, 81, 0.7)',
+              'rgba(246, 133, 31, 0.5)',
+              'rgba(0, 166, 81, 0.5)'
+            ],
+            borderColor: [
+              'rgba(246, 133, 31, 1)',
+              'rgba(0, 166, 81, 1)',
+              'rgba(246, 133, 31, 1)',
+              'rgba(0, 166, 81, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+      
+      // Intention chart
+      const intentionCtx = document.getElementById('intentionChart').getContext('2d');
+      const intentionData = [
+        allData.filter(item => item.intentionMigrer === 'Oui').length,
+        allData.filter(item => item.intentionMigrer === 'Non').length
+      ];
+      
+      if (intentionChart) intentionChart.destroy();
+      intentionChart = new Chart(intentionCtx, {
+        type: 'pie',
+        data: {
+          labels: ['Intention de migrer', 'Pas d\'intention'],
+          datasets: [{
+            data: intentionData,
+            backgroundColor: [
+              'rgba(246, 133, 31, 0.7)',
+              'rgba(0, 166, 81, 0.7)'
+            ],
+            borderColor: [
+              'rgba(246, 133, 31, 1)',
+              'rgba(0, 166, 81, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true
+        }
+      });
+    }
+
+    // Export data
+    document.getElementById('export-btn').addEventListener('click', function() {
+      const dataStr = JSON.stringify(allData, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `daosar_data_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Sidebar toggle
+    document.getElementById('sidebarCollapse').addEventListener('click', function() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+      document.getElementById('main-content').classList.toggle('expanded');
+    });
+
+    // Logout
+    document.getElementById('logout-link').addEventListener('click', function(e) {
+      e.preventDefault();
+      sessionStorage.removeItem('daosar_session');
+      window.location.href = 'login.html';
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      loadData();
+    });
   </script>
 </body>
 </html>
