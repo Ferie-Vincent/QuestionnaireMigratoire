@@ -4,15 +4,15 @@ const OFFLINE_URL = '/offline.html';
 
 const ESSENTIAL_URLS = [
   '/',
-  '/index.html',
-  '/dashboard.html',
-  '/parametres.html',
+  '/QuestionnaireMigratoire/index.html',
+  '/QuestionnaireMigratoire/dashboard.html',
+  '/QuestionnaireMigratoire/parametres.html',
   OFFLINE_URL,
-  '/css/styles.css',
-  '/js/script.js',
-  '/js/db.js',
-  '/pwa/icon-192.png',
-  '/pwa/icon-512.png'
+  '/QuestionnaireMigratoire/css/styles.css',
+  '/QuestionnaireMigratoire/js/script.js',
+  '/QuestionnaireMigratoire/js/db.js',
+  '/QuestionnaireMigratoire/pwa/icon-192.png',
+  '/QuestionnaireMigratoire/pwa/icon-512.png'
 ];
 
 // Installation: Cache les ressources essentielles
@@ -21,11 +21,11 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll([
         '/',
-        '/index.html',
-        '/offline.html',
-        '/css/styles.css',
-        '/js/script.js',
-        '/pwa/icon-192.png'
+        '/QuestionnaireMigratoire/index.html',
+        '/QuestionnaireMigratoire/offline.html',
+        '/QuestionnaireMigratoire/css/styles.css',
+        '/QuestionnaireMigratoire/js/script.js',
+        '/QuestionnaireMigratoire/pwa/icon-192.png'
       ]))
   );
 });
@@ -74,7 +74,7 @@ self.addEventListener('fetch', event => {
         })
         .catch(() => {
           // Fallback: retourne la page offline ou la page d'accueil
-          return caches.match(OFFLINE_URL) || caches.match('/index.html');
+          return caches.match(OFFLINE_URL) || caches.match('/QuestionnaireMigratoire/index.html');
         })
     );
     return;
@@ -110,7 +110,7 @@ async function fetchAndCache(request) {
   } catch (error) {
     // Fallback pour les images
     if (request.headers.get('accept').includes('image')) {
-      return caches.match('/pwa/icon-192.png');
+      return caches.match('/QuestionnaireMigratoire/pwa/icon-192.png');
     }
     return Response.error();
   }
