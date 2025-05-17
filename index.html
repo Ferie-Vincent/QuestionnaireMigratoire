@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Questionnaire Migration</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  <link rel="manifest" href="pwa/manifest.json">
-  <link rel="icon" href="pwa/icon-192.png">
-  <link rel="apple-touch-icon" href="pwa/icon-192.png">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#4e73df">
-  <link rel="manifest" href="manifest.json">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
+  <link rel="manifest" href="pwa/manifest.json" />
+  <link rel="icon" href="pwa/icon-192.png" />
+  <link rel="apple-touch-icon" href="pwa/icon-192.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#4e73df" />
+  <link rel="manifest" href="manifest.json" />
 
-  <link rel="stylesheet" href="css/styles.css">
-
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body>
 
+<body>
   <script>
-    if (!sessionStorage.getItem('daosar_session')) {
-      window.location.href = 'login.html';
+    if (!sessionStorage.getItem("daosar_session")) {
+      window.location.href = "login.html";
     }
   </script>
 
@@ -32,7 +32,7 @@
         <i class="bi bi-list"></i>
       </button>
     </div>
-    
+
     <ul class="sidebar-menu">
       <li>
         <a href="dashboard.html">
@@ -63,7 +63,6 @@
 
   <!-- Main Content -->
   <div id="main-content">
-
     <div class="container py-5 px-3 px-md-4 px-lg-5">
       <div class="card shadow-lg">
         <div class="card-header text-center">
@@ -75,48 +74,61 @@
           <div class="progress mb-5">
             <div class="progress-bar" role="progressbar" style="width: 0%" id="progressBar"></div>
           </div>
-          
+
           <form id="questionnaireForm" class="needs-validation" novalidate>
             <!-- I. Informations personnelles -->
             <div class="mb-5">
-              <h4><i class="bi bi-person-vcard me-2"></i> I. Informations personnelles</h4>
-              
+              <h4>
+                <i class="bi bi-person-vcard me-2"></i> I. Informations
+                personnelles
+              </h4>
+
               <div class="row g-3">
                 <div class="col-md-6">
                   <label class="form-label">Nom <span class="text-danger">*</span>:</label>
-                  <input type="text" class="form-control" name="nom" required>
+                  <input type="text" class="form-control" name="nom" required />
                   <div class="valid-feedback">Champ valide !</div>
-                  <div class="invalid-feedback">Veuillez renseigner ce champ.</div>
+                  <div class="invalid-feedback">
+                    Veuillez renseigner ce champ.
+                  </div>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Prénom <span class="text-danger">*</span>:</label>
-                  <input type="text" class="form-control" name="prenom" required>
+                  <input type="text" class="form-control" name="prenom" required />
                   <div class="valid-feedback">Champ valide !</div>
-                  <div class="invalid-feedback">Veuillez renseigner ce champ.</div>
+                  <div class="invalid-feedback">
+                    Veuillez renseigner ce champ.
+                  </div>
                 </div>
               </div>
-  
+
               <div class="row g-3 mt-3">
                 <div class="col-md-6">
                   <label class="form-label">Numéro de téléphone :</label>
-                  <input type="tel" class="form-control" name="telephone" pattern="[0-9]{10}" placeholder="Ex: 0701234567" required>
-                  <div class="form-text text-danger">Format: 10 chiffres sans espace</div>
+                  <input type="tel" class="form-control" name="telephone" pattern="[0-9]{10}"
+                    placeholder="Ex: 0701234567" required />
+                  <div class="form-text text-danger">
+                    Format: 10 chiffres sans espace
+                  </div>
                   <div class="valid-feedback">Champ valide !</div>
-                  <div class="invalid-feedback">Veuillez renseigner ce champ.</div>
+                  <div class="invalid-feedback">
+                    Veuillez renseigner ce champ.
+                  </div>
                 </div>
               </div>
-  
+
               <div class="mb-4 mt-4">
-                <label class="form-label">Sexe <span class="text-danger">*</span>:</label><br>
+                <label class="form-label">Sexe <span class="text-danger">*</span>:</label><br />
                 <div class="btn-group" role="group">
-                  <input type="radio" class="btn-check" name="sexe" id="homme" value="Homme" autocomplete="off" required>
+                  <input type="radio" class="btn-check" name="sexe" id="homme" value="Homme" autocomplete="off"
+                    required />
                   <label class="btn btn-outline-primary" for="homme">Homme</label>
-                  
-                  <input type="radio" class="btn-check" name="sexe" id="femme" value="Femme" autocomplete="off">
+
+                  <input type="radio" class="btn-check" name="sexe" id="femme" value="Femme" autocomplete="off" />
                   <label class="btn btn-outline-primary" for="femme">Femme</label>
                 </div>
               </div>
-  
+
               <div class="row g-3">
                 <div class="col-md-6">
                   <label class="form-label">Tranche d'âge <span class="text-danger">*</span>:</label>
@@ -128,7 +140,7 @@
                     <option value="Plus de 30 ans">Plus de 30 ans</option>
                   </select>
                 </div>
-                
+
                 <div class="col-md-6">
                   <label class="form-label">Niveau d'études atteint :</label>
                   <select class="form-select" name="niveauEtude" required>
@@ -140,99 +152,117 @@
                   </select>
                 </div>
               </div>
-  
+
               <div class="mt-4">
-                <label class="form-label">Situation professionnelle actuelle  :</label>
+                <label class="form-label">Situation professionnelle actuelle :</label>
                 <select class="form-select" name="situationPro" required>
                   <option value="" selected disabled>-- Choisir --</option>
                   <option value="Élève / Étudiant">Élève / Étudiant</option>
                   <option value="Sans emploi">Sans emploi</option>
                   <option value="Employé(e)">Employé(e)</option>
-                  <option value="Auto-entrepreneur / Travailleur informel">Auto-entrepreneur / Travailleur informel</option>
+                  <option value="Auto-entrepreneur / Travailleur informel">
+                    Auto-entrepreneur / Travailleur informel
+                  </option>
                 </select>
               </div>
-  
+
               <!-- Capture photo -->
               <div class="mt-4">
                 <label for="photoInput" class="form-label">Photo (facultatif) :</label>
-                <input class="form-control" type="file" accept="image/*" capture="environment" id="photoInput">
-                <div class="form-text text-danger">Format accepté : JPEG, PNG (max 2MB)</div>
+                <input class="form-control" type="file" accept="image/*" capture="environment" id="photoInput" />
+                <div class="form-text text-danger">
+                  Format accepté : JPEG, PNG (max 2MB)
+                </div>
               </div>
             </div>
-  
+
             <div class="section-divider"></div>
-  
+
             <!-- II. Connaissance de la migration irrégulière -->
             <div class="mb-5">
-              <h4><i class="bi bi-book me-2"></i> II. Connaissance de la migration irrégulière</h4>
-  
+              <h4>
+                <i class="bi bi-book me-2"></i> II. Connaissance de la
+                migration irrégulière
+              </h4>
+
               <div class="mb-4">
-                <label class="form-label">Avez-vous déjà entendu parler de la migration irrégulière ?</label><br>
+                <label class="form-label">Avez-vous déjà entendu parler de la migration irrégulière
+                  ?</label><br />
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="entenduMigration" id="entenduOui" value="Oui" required>
+                  <input class="form-check-input" type="radio" name="entenduMigration" id="entenduOui" value="Oui"
+                    required />
                   <label class="form-check-label" for="entenduOui">Oui</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="entenduMigration" id="entenduNon" value="Non">
+                  <input class="form-check-input" type="radio" name="entenduMigration" id="entenduNon" value="Non" />
                   <label class="form-check-label" for="entenduNon">Non</label>
                 </div>
               </div>
-  
+
               <div class="mb-4">
-                <label class="form-label">Si oui, par quels moyens ? (plusieurs réponses possibles)</label>
+                <label class="form-label">Si oui, par quels moyens ? (plusieurs réponses
+                  possibles)</label>
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="moyensInfo" id="medias" value="Médias">
+                      <input class="form-check-input" type="checkbox" name="moyensInfo" id="medias" value="Médias" />
                       <label class="form-check-label" for="medias">Médias (radio, télévision, presse)</label>
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="moyensInfo" id="reseaux" value="Réseaux sociaux">
+                      <input class="form-check-input" type="checkbox" name="moyensInfo" id="reseaux"
+                        value="Réseaux sociaux" />
                       <label class="form-check-label" for="reseaux">Réseaux sociaux</label>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="moyensInfo" id="famille" value="Famille ou amis">
+                      <input class="form-check-input" type="checkbox" name="moyensInfo" id="famille"
+                        value="Famille ou amis" />
                       <label class="form-check-label" for="famille">Famille ou amis</label>
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="moyensInfo" id="ong" value="ONG ou institutions">
+                      <input class="form-check-input" type="checkbox" name="moyensInfo" id="ong"
+                        value="ONG ou institutions" />
                       <label class="form-check-label" for="ong">ONG ou institutions</label>
                     </div>
                   </div>
                 </div>
-                <input type="text" class="form-control mt-3" placeholder="Autres moyens (préciser)" name="moyensAutres">
+                <input type="text" class="form-control mt-3" placeholder="Autres moyens (préciser)"
+                  name="moyensAutres" />
               </div>
             </div>
-  
+
             <div class="section-divider"></div>
-  
+
             <!-- III. Expérience ou intention migratoire -->
             <div class="mb-5">
-              <h4><i class="bi bi-globe-americas me-2"></i> III. Expérience ou intention migratoire</h4>
-  
+              <h4>
+                <i class="bi bi-globe-americas me-2"></i> III. Expérience ou
+                intention migratoire
+              </h4>
+
               <div class="mb-4">
-                <label class="form-label">Avez-vous déjà tenté de migrer de façon irrégulière ?</label><br>
+                <label class="form-label">Avez-vous déjà tenté de migrer de façon irrégulière
+                  ?</label><br />
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="dejaTente" id="tenteOui" value="Oui" required>
+                  <input class="form-check-input" type="radio" name="dejaTente" id="tenteOui" value="Oui" required />
                   <label class="form-check-label" for="tenteOui">Oui</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="dejaTente" id="tenteNon" value="Non">
+                  <input class="form-check-input" type="radio" name="dejaTente" id="tenteNon" value="Non" />
                   <label class="form-check-label" for="tenteNon">Non</label>
                 </div>
               </div>
-  
-              <div class="mb-4" id="detailsTentative" style="display: none;">
+
+              <div class="mb-4" id="detailsTentative" style="display: none">
                 <div class="row g-3">
                   <div class="col-md-6">
                     <label class="form-label">Année de la tentative :</label>
-                    <input type="number" class="form-control" name="anneeTentative" min="2000" max="2023">
+                    <input type="number" class="form-control" name="anneeTentative" min="2000" max="2023" />
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Destination souhaitée :</label>
-                    <input type="text" class="form-control" name="destinationTentative">
+                    <input type="text" class="form-control" name="destinationTentative" />
                   </div>
                 </div>
                 <div class="mt-3">
@@ -240,32 +270,39 @@
                   <textarea class="form-control" name="raisonEchec" rows="2"></textarea>
                 </div>
               </div>
-  
+
               <div class="mb-4">
-                <label class="form-label">Pensez-vous à migrer prochainement ?</label><br>
+                <label class="form-label">Pensez-vous à migrer prochainement ?</label><br />
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="intentionMigrer" id="intentionOui" value="Oui" required>
+                  <input class="form-check-input" type="radio" name="intentionMigrer" id="intentionOui" value="Oui"
+                    required />
                   <label class="form-check-label" for="intentionOui">Oui</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="intentionMigrer" id="intentionNon" value="Non">
+                  <input class="form-check-input" type="radio" name="intentionMigrer" id="intentionNon" value="Non" />
                   <label class="form-check-label" for="intentionNon">Non</label>
                 </div>
               </div>
-  
-              <div class="mb-4" id="detailsIntention" style="display: none;">
+
+              <div class="mb-4" id="detailsIntention" style="display: none">
                 <div class="row g-3">
                   <div class="col-md-6">
                     <label class="form-label">Destination envisagée :</label>
-                    <input type="text" class="form-control" name="destinationEnvisagee">
+                    <input type="text" class="form-control" name="destinationEnvisagee" />
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Méthode envisagée :</label>
                     <select class="form-select" name="methodeEnvisagee">
-                      <option value="" selected disabled>-- Choisir --</option>
+                      <option value="" selected disabled>
+                        -- Choisir --
+                      </option>
                       <option value="Par la mer">Par la mer</option>
-                      <option value="Par voie terrestre">Par voie terrestre</option>
-                      <option value="Avec faux documents">Avec faux documents</option>
+                      <option value="Par voie terrestre">
+                        Par voie terrestre
+                      </option>
+                      <option value="Avec faux documents">
+                        Avec faux documents
+                      </option>
                       <option value="Autre">Autre</option>
                     </select>
                   </div>
@@ -276,161 +313,183 @@
                 </div>
               </div>
             </div>
-  
+
             <div class="section-divider"></div>
-  
+
             <!-- IV. Recommandations et attentes -->
             <div class="mb-5">
-              <h4><i class="bi bi-lightbulb me-2"></i> IV. Recommandations et attentes</h4>
-  
+              <h4>
+                <i class="bi bi-lightbulb me-2"></i> IV. Recommandations et
+                attentes
+              </h4>
+
               <div class="mb-4">
-                <label class="form-label">Quelles sont, selon vous, les raisons qui poussent les jeunes à migrer ?</label>
-                <textarea class="form-control" name="raisonsMigration" rows="4" placeholder="Veuillez donner votre avis..."></textarea>
+                <label class="form-label">Quelles sont, selon vous, les raisons qui poussent les
+                  jeunes à migrer ?</label>
+                <textarea class="form-control" name="raisonsMigration" rows="4"
+                  placeholder="Veuillez donner votre avis..."></textarea>
               </div>
-  
+
               <div class="mb-4">
-                <label class="form-label">Que faudrait-il faire pour limiter la migration irrégulière ?</label>
+                <label class="form-label">Que faudrait-il faire pour limiter la migration irrégulière
+                  ?</label>
                 <textarea class="form-control" name="solutions" rows="4" placeholder="Vos suggestions..."></textarea>
               </div>
-  
+
               <div class="mb-4">
                 <label class="form-label">Avez-vous des suggestions pour les autorités ?</label>
-                <textarea class="form-control" name="suggestions" rows="4" placeholder="Vos recommandations..."></textarea>
+                <textarea class="form-control" name="suggestions" rows="4"
+                  placeholder="Vos recommandations..."></textarea>
               </div>
             </div>
-  
+
             <div class="d-flex justify-content-between align-items-center mt-5">
               <button type="reset" class="btn btn-outline-secondary px-4">
                 <i class="bi bi-x-circle me-1"></i> Annuler
               </button>
-              
+
               <div>
                 <button id="btnSave" type="submit" class="btn btn-primary px-4">
                   <i class="bi bi-save me-1"></i> Enregistrer
                 </button>
-                <!-- <a id="lienJSON" class="btn btn-outline-success px-4 ms-2" style="display: none;">
-                  <i class="bi bi-download me-1"></i> Télécharger JSON
-                </a> -->
               </div>
             </div>
           </form>
-  
+
           <div id="message" class="mt-4"></div>
         </div>
       </div>
     </div>
 
+    <div class="container py-2 px-3 px-md-4 px-lg-5">
+      <div class="row">
+        <div class="col-12 text-center">
+          <span> <a href="dashboard.html">Tableau de bord</a> </span> | <span> <a href="index.html">Formulaire</a> </span> | <span> <a href="parametres.html">Paramètres</a> </span> | <span> <a href="#" id="logout-link">Déconnexion</a> </span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Bootstrap JS Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
+
   <script src="./js/db.js"></script>
   <script src="./js/script.js"></script>
-  
+
   <script>
     // Affichage conditionnel des sections
-    document.querySelectorAll('input[name="dejaTente"]').forEach(input => {
-      input.addEventListener('change', function(e) {
-        document.getElementById('detailsTentative').style.display = 
-          (e.target.value === 'Oui' && e.target.checked) ? 'block' : 'none';
+    document.querySelectorAll('input[name="dejaTente"]').forEach((input) => {
+      input.addEventListener("change", function (e) {
+        document.getElementById("detailsTentative").style.display =
+          e.target.value === "Oui" && e.target.checked ? "block" : "none";
       });
     });
-  
-    document.querySelectorAll('input[name="intentionMigrer"]').forEach(input => {
-      input.addEventListener('change', function(e) {
-        document.getElementById('detailsIntention').style.display = 
-          (e.target.value === 'Oui' && e.target.checked) ? 'block' : 'none';
+
+    document
+      .querySelectorAll('input[name="intentionMigrer"]')
+      .forEach((input) => {
+        input.addEventListener("change", function (e) {
+          document.getElementById("detailsIntention").style.display =
+            e.target.value === "Oui" && e.target.checked ? "block" : "none";
+        });
       });
-    });
-  
+
     // Barre de progression améliorée
-    document.addEventListener('DOMContentLoaded', function() {
-      const form = document.getElementById('questionnaireForm');
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.getElementById("questionnaireForm");
       if (!form) return;
-  
-      const progressBar = document.getElementById('progressBar');
-      const sections = form.querySelectorAll('div.mb-5');
+
+      const progressBar = document.getElementById("progressBar");
+      const sections = form.querySelectorAll("div.mb-5");
       const totalSections = sections.length;
-      
+
       function updateProgress() {
         let completed = 0;
-        
-        sections.forEach(section => {
-          const inputs = section.querySelectorAll('input[required], select[required], textarea[required]');
+
+        sections.forEach((section) => {
+          const inputs = section.querySelectorAll(
+            "input[required], select[required], textarea[required]"
+          );
           let sectionCompleted = true;
-          
-          inputs.forEach(input => {
-            if (input.type === 'checkbox' || input.type === 'radio') {
+
+          inputs.forEach((input) => {
+            if (input.type === "checkbox" || input.type === "radio") {
               const name = input.name;
-              const checked = form.querySelector(`input[name="${name}"]:checked`);
+              const checked = form.querySelector(
+                `input[name="${name}"]:checked`
+              );
               if (!checked) sectionCompleted = false;
             } else if (!input.value.trim()) {
               sectionCompleted = false;
             }
           });
-          
+
           if (sectionCompleted) completed++;
         });
-        
+
         const progress = Math.round((completed / totalSections) * 100);
         progressBar.style.width = `${progress}%`;
-        progressBar.setAttribute('aria-valuenow', progress);
-        
+        progressBar.setAttribute("aria-valuenow", progress);
+
         // Changement de couleur en fonction du progrès
         if (progress < 30) {
-          progressBar.classList.remove('bg-success', 'bg-warning');
-          progressBar.classList.add('bg-danger');
+          progressBar.classList.remove("bg-success", "bg-warning");
+          progressBar.classList.add("bg-danger");
         } else if (progress < 70) {
-          progressBar.classList.remove('bg-danger', 'bg-success');
-          progressBar.classList.add('bg-warning');
+          progressBar.classList.remove("bg-danger", "bg-success");
+          progressBar.classList.add("bg-warning");
         } else {
-          progressBar.classList.remove('bg-danger', 'bg-warning');
-          progressBar.classList.add('bg-success');
+          progressBar.classList.remove("bg-danger", "bg-warning");
+          progressBar.classList.add("bg-success");
         }
       }
-      
+
       // Écouteurs d'événements améliorés
-      form.addEventListener('change', updateProgress);
-      form.addEventListener('input', updateProgress);
-      form.addEventListener('reset', () => {
-        progressBar.style.width = '0%';
-        progressBar.classList.remove('bg-success', 'bg-warning');
-        progressBar.classList.add('bg-danger');
+      form.addEventListener("change", updateProgress);
+      form.addEventListener("input", updateProgress);
+      form.addEventListener("reset", () => {
+        progressBar.style.width = "0%";
+        progressBar.classList.remove("bg-success", "bg-warning");
+        progressBar.classList.add("bg-danger");
       });
-  
+
       // Initialisation au chargement
       updateProgress();
-  
+
       // Menu hamburger amélioré
-      const sidebarCollapse = document.getElementById('sidebarCollapse');
+      const sidebarCollapse = document.getElementById("sidebarCollapse");
       if (sidebarCollapse) {
-        sidebarCollapse.addEventListener('click', function() {
-          document.getElementById('sidebar').classList.toggle('collapsed');
-          document.getElementById('main-content').classList.toggle('expanded');
-          
+        sidebarCollapse.addEventListener("click", function () {
+          document.getElementById("sidebar").classList.toggle("collapsed");
+          document
+            .getElementById("main-content")
+            .classList.toggle("expanded");
+
           // Animation smooth
-          const mainContent = document.getElementById('main-content');
-          mainContent.style.transition = 'margin-left 0.3s ease-in-out';
+          const mainContent = document.getElementById("main-content");
+          mainContent.style.transition = "margin-left 0.3s ease-in-out";
         });
       }
-  
+
       // Validation améliorée des champs téléphone
       const phoneInput = document.querySelector('input[name="telephone"]');
       if (phoneInput) {
-        phoneInput.addEventListener('input', function(e) {
-          const value = e.target.value.replace(/\D/g, '');
+        phoneInput.addEventListener("input", function (e) {
+          const value = e.target.value.replace(/\D/g, "");
           e.target.value = value.slice(0, 10);
         });
       }
     });
-  
+
     // Gestion de la déconnexion
-    document.getElementById('logout-link')?.addEventListener('click', function(e) {
-      e.preventDefault();
-      sessionStorage.removeItem('daosar_session');
-      window.location.href = 'login.html';
-    });
+    document
+      .getElementById("logout-link")
+      ?.addEventListener("click", function (e) {
+        e.preventDefault();
+        sessionStorage.removeItem("daosar_session");
+        window.location.href = "login.html";
+      });
   </script>
 </body>
+
 </html>
