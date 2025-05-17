@@ -364,7 +364,9 @@
     <div class="container py-2 px-3 px-md-4 px-lg-5">
       <div class="row">
         <div class="col-12 text-center">
-          <span> <a href="dashboard.html">Tableau de bord</a> </span> | <span> <a href="index.html">Formulaire</a> </span> | <span> <a href="parametres.html">Paramètres</a> </span> | <span> <a href="#" id="logout-link">Déconnexion</a> </span>
+          <span> <a href="dashboard.html">Tableau de bord</a> </span> | <span> <a href="index.html">Formulaire</a>
+          </span> | <span> <a href="parametres.html">Paramètres</a> </span> | <span> <a href="#"
+              id="logout-link">Déconnexion</a> </span>
         </div>
       </div>
     </div>
@@ -480,6 +482,19 @@
         });
       }
     });
+
+    // Enregistrement du Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful');
+          })
+          .catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+      });
+    }
 
     // Gestion de la déconnexion
     document
