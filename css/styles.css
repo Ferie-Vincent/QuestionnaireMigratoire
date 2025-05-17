@@ -398,6 +398,18 @@ h4 {
   }
 }
 
+#btnForceSync {
+  transition: all 0.3s;
+}
+#btnForceSync:hover {
+  background-color: #ffc107d0;
+}
+#btnForceSync:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
 /* Responsive */
 @media (max-width: 768px) {
   .btn-group {

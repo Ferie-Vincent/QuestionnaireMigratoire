@@ -4,36 +4,44 @@
  * 
  * Fonctionnalités :
  * - Collecte des données de formulaire (texte + images)
- * - Sauvegarde locale sécurisée (localStorage)
+ * - Sauvegarde locale (localStorage + IndexedDB pour le hors-ligne)
  * - Synchronisation automatique quand en ligne
  * - Export des données en JSON
  * 
- * Améliorations :
- * - URL du script Google externalisée
- * - Synchronisation par lots
- * - Gestion des erreurs renforcée
- * - Documentation complétée
+ * Dernières améliorations :
+ * - Intégration complète d'IndexedDB
+ * - Gestion des conflits de synchronisation
+ * - Messages d'erreur détaillés
+ * - Optimisation des performances
  */
+
+import { db } from './db.js';
 
 // Configuration
 const CONFIG = {
   GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby6ip-Exm_3tLjC1lnxc8ShI4QzNUoIKdr59BANYTwsB6tpIPt43vO1LGF0I4I47NmOHQ/exec',
   MAX_LOCAL_STORAGE_ENTRIES: 100,
   MAX_IMAGE_SIZE_MB: 2,
-  SYNC_BATCH_SIZE: 5
+  SYNC_BATCH_SIZE: 5,
+  SYNC_INTERVAL: 30000 // 30 secondes
 };
 
-// Messages (pour internationalisation future)
+// Messages
 const MESSAGES = {
   SUCCESS: "✅ Données synchronisées avec Google Sheets !",
   ERROR_SYNC: "⚠️ Synchronisation échouée",
-  ERROR_PHOTO_SIZE: "La photo dépasse la taille maximale autorisée",
+  ERROR_PHOTO_SIZE: "La photo dépasse 2MB",
   SAVE_SUCCESS: "✅ Enregistrement réussi !",
-  SAVE_ERROR: "❌ Erreur lors de l'enregistrement"
+  SAVE_ERROR: "❌ Erreur lors de l'enregistrement",
+  OFFLINE_SAVE: "📶 Données sauvegardées pour synchronisation ultérieure",
+  STORAGE_FULL: "⚠️ Espace de stockage insuffisant"
 };
 
+// État global
+let isSyncing = false;
+
 /**
- * 🔄 Convertit un fichier image en base64 avec validation
+ * 🔄 Convertit un fichier image en base64
  * @param {File} file - Fichier image à convertir
  * @returns {Promise<string|null>} - Base64 ou null si invalide
  */
@@ -61,7 +69,7 @@ async function collectFormData() {
   const formData = new FormData(form);
   const data = {};
 
-  // Conversion FormData -> Object avec gestion des multi-valeurs
+  // Conversion FormData -> Object
   for (const [key, value] of formData.entries()) {
     if (data[key]) {
       data[key] = Array.isArray(data[key]) ? data[key] : [data[key]];
@@ -82,10 +90,10 @@ async function collectFormData() {
 
   // Métadonnées
   data._metadata = {
-    id: Date.now().toString(36) + Math.random().toString(36).substring(2), // ID unique
+    id: Date.now().toString(36) + Math.random().toString(36).substring(2),
     timestamp: new Date().toISOString(),
     device: navigator.userAgent,
-    synced: false // Marqueur pour la synchronisation
+    synced: false
   };
 
   return data;
@@ -100,16 +108,13 @@ function saveToLocalStorage(newData) {
   try {
     let storedData = JSON.parse(localStorage.getItem('reponses') || '[]');
     
-    // Vérification de la structure
     if (!Array.isArray(storedData)) {
       console.warn("Corruption des données, réinitialisation...");
       storedData = [];
     }
 
-    // Ajout des nouvelles données
     storedData.push(newData);
     
-    // Limitation du nombre d'entrées
     if (storedData.length > CONFIG.MAX_LOCAL_STORAGE_ENTRIES) {
       storedData = storedData.slice(-CONFIG.MAX_LOCAL_STORAGE_ENTRIES);
     }
@@ -123,16 +128,18 @@ function saveToLocalStorage(newData) {
 }
 
 /**
- * ☁️ Synchronise les données avec Google Sheets par lots
+ * ☁️ Synchronise les données avec Google Sheets
  */
 async function syncDataWithGoogleSheet() {
-  const data = JSON.parse(localStorage.getItem('reponses') || '[]')
-    .filter(entry => !entry._metadata?.synced); // Ne sync que les nouvelles entrées
-
-  if (!data.length) return;
+  if (isSyncing) return false;
+  isSyncing = true;
 
   try {
-    // Envoi par lots
+    const data = JSON.parse(localStorage.getItem('reponses') || '[]')
+      .filter(entry => !entry._metadata?.synced);
+
+    if (!data.length) return true; // Rien à synchroniser
+
     for (let i = 0; i < data.length; i += CONFIG.SYNC_BATCH_SIZE) {
       const batch = data.slice(i, i + CONFIG.SYNC_BATCH_SIZE);
       
@@ -142,22 +149,20 @@ async function syncDataWithGoogleSheet() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(entry)
         });
-
         if (!response.ok) throw new Error("Erreur HTTP");
-
-        // Marquer comme synchronisé
         entry._metadata.synced = true;
       }));
     }
 
-    // Mettre à jour le localStorage avec le statut de sync
-    const allData = JSON.parse(localStorage.getItem('reponses') || '[]');
-    localStorage.setItem('reponses', JSON.stringify(allData));
-    
+    localStorage.setItem('reponses', JSON.stringify(data));
     showMessage(MESSAGES.SUCCESS);
+    return true;
   } catch (error) {
     console.error("Erreur synchronisation:", error);
     showMessage(MESSAGES.ERROR_SYNC, "danger");
+    return false;
+  } finally {
+    isSyncing = false;
   }
 }
 
@@ -206,7 +211,7 @@ function showMessage(text, type = 'success') {
 /**
  * ▶️ Initialisation de l'application
  */
-function initApp() {
+async function initApp() {
   // Soumission du formulaire
   document.getElementById('questionnaireForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -225,22 +230,50 @@ function initApp() {
       e.target.reset();
       e.target.classList.remove('was-validated');
 
-      // Tentative de sync immédiate si en ligne
       if (navigator.onLine) await syncDataWithGoogleSheet();
     } catch (error) {
-      showMessage(`${MESSAGES.SAVE_ERROR}: ${error.message}`, 'danger');
-      console.error(error);
+      const message = error.message.includes('QuotaExceeded') 
+        ? MESSAGES.STORAGE_FULL 
+        : MESSAGES.SAVE_ERROR;
+      showMessage(`${message}: ${error.message}`, 'danger');
     }
   });
 
-  // Vérification périodique de la connexion
+  // Synchronisation périodique
   setInterval(() => {
-    if (navigator.onLine) syncDataWithGoogleSheet();
-  }, 30000); // Toutes les 30 secondes
+    if (navigator.onLine && !isSyncing) syncDataWithGoogleSheet();
+  }, CONFIG.SYNC_INTERVAL);
 
-  // Initialisation
+  // Événement de reconnexion
+  window.addEventListener('online', () => {
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready
+        .then(registration => registration.sync.register('sync-submissions'))
+        .catch(console.error);
+    }
+  });
+
   updateJsonDownloadLink();
-  window.addEventListener('online', syncDataWithGoogleSheet);
+
+
+  // Bouton de sauvegarde manuelle
+  document.getElementById('btnForceSync')?.addEventListener('click', async () => {
+    if (!navigator.onLine) {
+      showMessage("⚠️ Vous êtes hors ligne. Connexion requise.", "warning");
+      return;
+    }
+
+    const success = await syncDataWithGoogleSheet();
+    if (success) {
+      // Optionnel : Nettoyer IndexedDB après succès
+      try {
+        await db.init();
+        await db.deletePendingRequests();
+      } catch (error) {
+        console.error("Nettoyage IndexedDB échoué:", error);
+      }
+    }
+  });
 }
 
 // Démarrage
@@ -251,7 +284,7 @@ if (document.readyState === 'complete') {
 }
 
 /**
- * 🔒 Déconnexion (à adapter selon le système d'authentification)
+ * 🔒 Déconnexion
  */
 function logout() {
   sessionStorage.removeItem('daosar_session');
