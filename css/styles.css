@@ -500,8 +500,6 @@ h4 {
   }
 }
 
-<<<<<<< HEAD
-=======
 #btnForceSync {
   transition: all 0.3s;
 }
@@ -514,7 +512,6 @@ h4 {
 }
 
 
->>>>>>> pwa
 /* Responsive */
 @media (max-width: 768px) {
   .btn-group {
