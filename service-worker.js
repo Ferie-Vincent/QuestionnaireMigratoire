@@ -1,85 +1,116 @@
-import { db } from 'css/db.js';
-
-// service-worker.js - Service Worker optimisé pour DAOSAR
-const CACHE_NAME = 'daosar-cache-v3';
+// service-worker.js - Service Worker optimisé pour DAOSAR (version corrigée)
+const CACHE_NAME = 'daosar-cache-v4'; // Version incrémentée
 const OFFLINE_URL = '/offline.html';
 const ESSENTIAL_URLS = [
   '/',
+  '/index.html',
+  '/dashboard.html',
+  '/parametres.html',
   OFFLINE_URL,
   '/css/styles.css',
   '/js/script.js',
-  '/pwa/icon-192.png'
+  '/js/db.js',
+  '/pwa/icon-192.png',
+  '/pwa/icon-512.png'
 ];
 
-// Installation: Cache uniquement l'essentiel
+// Installation: Cache les ressources essentielles
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ESSENTIAL_URLS))
-      .then(self.skipWaiting())
+      .then(cache => {
+        console.log('Cache ouvert, ajout des ressources');
+        return cache.addAll(ESSENTIAL_URLS);
+      })
+      .then(() => {
+        console.log('Toutes les ressources mises en cache');
+        return self.skipWaiting();
+      })
+      .catch(err => {
+        console.error('Échec de la mise en cache:', err);
+      })
   );
 });
 
-// Activation: Nettoyage + prise de contrôle
+// Activation: Nettoyage des anciens caches
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.map(key => key !== CACHE_NAME && caches.delete(key))
-    )).then(() => self.clients.claim())
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cache => {
+          if (cache !== CACHE_NAME) {
+            console.log('Suppression de l\'ancien cache:', cache);
+            return caches.delete(cache);
+          }
+        })
+      );
+    }).then(() => {
+      console.log('Service Worker activé et prêt');
+      return self.clients.claim();
+    })
   );
 });
 
 // Stratégie de fetch optimisée
 self.addEventListener('fetch', event => {
   const { request } = event;
+  const requestUrl = new URL(request.url);
 
-  // Ignorer les non-GET et certaines URLs
-  if (request.method !== 'GET' || request.url.includes('chrome-extension')) {
+  // Ignorer les requêtes non-GET et les URLs externes/chrome
+  if (request.method !== 'GET' || 
+      requestUrl.origin !== self.location.origin ||
+      request.url.includes('chrome-extension')) {
     return;
   }
 
-  // API Google Sheets: Network First avec sauvegarde hors-ligne
-  if (request.url.includes('googleapis.com')) {
-    event.respondWith(
-      fetch(request)
-        .catch(() => new Response(JSON.stringify({ pendingSync: true }), {
-          headers: { 'Content-Type': 'application/json' }
-        }))
-    );
-    return;
-  }
-
-  // Pages HTML: Network First + fallback offline
+  // Pour les pages HTML: Network First avec fallback cache
   if (request.headers.get('accept').includes('text/html')) {
     event.respondWith(
       fetch(request)
         .then(response => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+          // Mise à jour du cache en arrière-plan
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME)
+            .then(cache => cache.put(request, responseClone));
           return response;
         })
-        .catch(() => caches.match(OFFLINE_URL) || caches.match('/'))
+        .catch(() => {
+          // Fallback: retourne la page offline ou la page d'accueil
+          return caches.match(OFFLINE_URL) || caches.match('/index.html');
+        })
     );
     return;
   }
 
-  // Assets: Cache First + mise à jour en arrière-plan
+  // Pour les autres assets: Cache First avec mise à jour
   event.respondWith(
-    caches.match(request).then(cachedResponse => 
-      cachedResponse || fetchAndCache(request)
-    )
+    caches.match(request)
+      .then(cachedResponse => {
+        // Si trouvé en cache, retourne la réponse
+        if (cachedResponse) {
+          // Mise à jour en arrière-plan
+          fetchAndCache(request);
+          return cachedResponse;
+        }
+        // Sinon, fetch + mise en cache
+        return fetchAndCache(request);
+      })
   );
 });
 
+// Fonction helper pour fetch + mise en cache
 async function fetchAndCache(request) {
   try {
     const response = await fetch(request);
+    
+    // Ne met en cache que les réponses valides
     if (response.ok) {
-      const clone = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+      const cache = await caches.open(CACHE_NAME);
+      await cache.put(request, response.clone());
     }
     return response;
-  } catch {
+  } catch (error) {
+    // Fallback pour les images
     if (request.headers.get('accept').includes('image')) {
       return caches.match('/pwa/icon-192.png');
     }
@@ -87,69 +118,27 @@ async function fetchAndCache(request) {
   }
 }
 
-self.addEventListener('fetch', event => {
-  const { request } = event;
-
-  // Interception des soumissions de formulaire
-  if (request.url.includes('googleapis.com') && request.method === 'POST') {
-    event.respondWith(
-      fetch(request.clone())
-        .catch(async () => {
-          // Sauvegarde dans IndexedDB si échec
-          const data = await request.json();
-          await db.init();
-          await db.saveRequest({
-            url: request.url,
-            data,
-            headers: { 'Content-Type': 'application/json' }
-          });
-          return new Response(JSON.stringify({ savedOffline: true }), {
-            status: 202,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        })
-    );
-  }
-});
-
-// Synchronisation des données en arrière-plan
-self.addEventListener('sync', async event => {
-  if (event.tag === 'sync-submissions') {
-    event.waitUntil(
-      (async () => {
-        await db.init();
-        const pendingRequests = await db.getPendingRequests();
-
-        for (const req of pendingRequests) {
-          try {
-            const response = await fetch(req.url, {
-              method: 'POST',
-              headers: req.headers,
-              body: JSON.stringify(req.data)
-            });
-
-            if (response.ok) {
-              await db.deleteRequest(req.id);
-            }
-          } catch (error) {
-            console.error('Sync failed:', error);
-          }
-        }
-      })()
-    );
-  }
-});
-
 // Gestion des notifications
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(
-    clients.matchAll({ type: 'window' }).then(windowClients => {
+    clients.matchAll({ 
+      type: 'window',
+      includeUncontrolled: true
+    }).then(windowClients => {
+      // Focus sur une fenêtre existante ou ouvre une nouvelle
       if (windowClients.length > 0) {
-        windowClients[0].focus();
+        return windowClients[0].focus();
       } else {
-        clients.openWindow('/');
+        return clients.openWindow('/');
       }
     })
   );
+});
+
+// Gestion de l'état de connexion
+self.addEventListener('message', event => {
+  if (event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

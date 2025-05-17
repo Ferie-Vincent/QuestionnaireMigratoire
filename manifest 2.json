@@ -2,7 +2,7 @@
   "name": "Questionnaire Migration",
   "short_name": "MigQuest",
   "id": "/?source=pwa",
-  "start_url": "/index.html",
+  "start_url": "/QuestionnaireMigratoire/index.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -11,6 +11,9 @@
   "background_color": "#f6851f",
   "theme_color": "#00a651",
   "description": "Application de questionnaire sur les migrations irrégulières",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "categories": [
     "survey",
     "migration",
@@ -18,40 +21,36 @@
   ],
   "icons": [
     {
-      "src": "pwa/icon-192.png",
+      "src": "icon-192-any.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "pwa/icon-512.png",
+      "src": "icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "pwa/screenshot1.png",
+      "src": "screenshot1.png",
       "sizes": "1280x800",
       "type": "image/png",
       "label": "Capture d'écran principale"
-    }
-  ],
-  "prefer_related_applications": false,
-  "related_applications": [],
-  "shortcuts": [
-    {
-      "name": "Nouveau questionnaire",
-      "short_name": "Nouveau",
-      "description": "Commencer un nouveau questionnaire",
-      "url": "/index.html"
-    },
-    {
-      "name": "Tableau de bord",
-      "short_name": "Dashboard",
-      "description": "Voir les statistiques",
-      "url": "/dashboard.html"
     }
   ]
 }
