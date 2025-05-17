@@ -1,57 +1,33 @@
 {
   "name": "Questionnaire Migration",
   "short_name": "MigQuest",
-  "id": "/?source=pwa",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "lang": "fr",
-  "dir": "ltr",
   "background_color": "#f6851f",
   "theme_color": "#00a651",
-  "description": "Application de questionnaire sur les migrations irrégulières",
-  "categories": [
-    "survey",
-    "migration",
-    "questionnaire"
-  ],
+  "description": "Application de questionnaire sur les migrations",
   "icons": [
     {
       "src": "pwa/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "pwa/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "pwa/screenshot1.png",
-      "sizes": "1280x800",
-      "type": "image/png",
-      "label": "Capture d'écran principale"
-    }
-  ],
-  "prefer_related_applications": false,
-  "related_applications": [],
-  "shortcuts": [
-    {
-      "name": "Nouveau questionnaire",
-      "short_name": "Nouveau",
-      "description": "Commencer un nouveau questionnaire",
-      "url": "/index.html"
-    },
-    {
-      "name": "Tableau de bord",
-      "short_name": "Dashboard",
-      "description": "Voir les statistiques",
-      "url": "/dashboard.html"
-    }
+  "screenshots": [{
+    "src": "pwa/screenshot1.png",
+    "sizes": "1280x800",
+    "type": "image/png"
+  }],
+  "features": [
+    "Offline",
+    "Add to Home Screen"
   ]
 }

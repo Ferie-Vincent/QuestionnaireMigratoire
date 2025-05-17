@@ -1,6 +1,7 @@
 // service-worker.js - Service Worker optimisé pour DAOSAR (version corrigée)
-const CACHE_NAME = 'daosar-cache-v4'; // Version incrémentée
+const CACHE_NAME = 'daosar-cache-v1';
 const OFFLINE_URL = '/offline.html';
+
 const ESSENTIAL_URLS = [
   '/',
   '/index.html',
@@ -15,20 +16,17 @@ const ESSENTIAL_URLS = [
 ];
 
 // Installation: Cache les ressources essentielles
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Cache ouvert, ajout des ressources');
-        return cache.addAll(ESSENTIAL_URLS);
-      })
-      .then(() => {
-        console.log('Toutes les ressources mises en cache');
-        return self.skipWaiting();
-      })
-      .catch(err => {
-        console.error('Échec de la mise en cache:', err);
-      })
+      .then((cache) => cache.addAll([
+        '/',
+        '/index.html',
+        '/offline.html',
+        '/css/styles.css',
+        '/js/script.js',
+        '/pwa/icon-192.png'
+      ]))
   );
 });
 
