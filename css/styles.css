@@ -398,6 +398,123 @@ h4 {
   }
 }
 
+#btnForceSync {
+  transition: all 0.3s;
+}
+#btnForceSync:hover {
+  background-color: #ffc107d0;
+}
+#btnForceSync:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+@media (max-width: 576px) {
+  body {
+    font-size: 14px;
+  }
+
+  .top-navbar {
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .logo-daosar {
+    font-size: 1.3rem;
+  }
+
+  #sidebar {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    max-height: 100vh;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1050;
+  }
+
+  #sidebar.active {
+    transform: translateX(0);
+  }
+
+  #main-content {
+    margin-left: 0;
+    padding: 0.75rem;
+  }
+
+  .card,
+  .stat-card {
+    margin-bottom: 1rem;
+    border-radius: 10px;
+  }
+
+  .card-header h1 {
+    font-size: 1.2rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h4 {
+    font-size: 1.1rem;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .form-control,
+  .form-select {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline-primary {
+    padding: 8px 15px;
+    font-size: 14px;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  #photoInput::file-selector-button {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .geo-fields {
+    flex-direction: column;
+  }
+
+  .section-divider {
+    margin: 1.5rem 0;
+  }
+
+  .stat-icon {
+    font-size: 1.5rem;
+  }
+}
+
+<<<<<<< HEAD
+=======
+#btnForceSync {
+  transition: all 0.3s;
+}
+#btnForceSync:hover {
+  background-color: #ffc107d0;
+}
+#btnForceSync:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+>>>>>>> pwa
 /* Responsive */
 @media (max-width: 768px) {
   .btn-group {
