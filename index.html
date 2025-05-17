@@ -85,10 +85,14 @@
                 <div class="col-md-6">
                   <label class="form-label">Nom <span class="text-danger">*</span>:</label>
                   <input type="text" class="form-control" name="nom" required>
+                  <div class="valid-feedback">Champ valide !</div>
+                  <div class="invalid-feedback">Veuillez renseigner ce champ.</div>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Prénom <span class="text-danger">*</span>:</label>
                   <input type="text" class="form-control" name="prenom" required>
+                  <div class="valid-feedback">Champ valide !</div>
+                  <div class="invalid-feedback">Veuillez renseigner ce champ.</div>
                 </div>
               </div>
   
@@ -97,6 +101,8 @@
                   <label class="form-label">Numéro de téléphone :</label>
                   <input type="tel" class="form-control" name="telephone" pattern="[0-9]{10}" placeholder="Ex: 0701234567" required>
                   <div class="form-text text-danger">Format: 10 chiffres sans espace</div>
+                  <div class="valid-feedback">Champ valide !</div>
+                  <div class="invalid-feedback">Veuillez renseigner ce champ.</div>
                 </div>
               </div>
   
@@ -108,9 +114,6 @@
                   
                   <input type="radio" class="btn-check" name="sexe" id="femme" value="Femme" autocomplete="off">
                   <label class="btn btn-outline-primary" for="femme">Femme</label>
-                  
-                  <input type="radio" class="btn-check" name="sexe" id="autre" value="Autre" autocomplete="off">
-                  <label class="btn btn-outline-primary" for="autre">Autre</label>
                 </div>
               </div>
   
@@ -302,10 +305,6 @@
               </button>
               
               <div>
-                <!-- Bouton Sauvegarde Manuelle -->
-                <button id="btnForceSync" type="submit" class="btn btn-warning px-4 me-2">
-                  <i class="bi bi-cloud-arrow-up me-1"></i> Sauvegarder en ligne
-                </button>
                 <button id="btnSave" type="submit" class="btn btn-primary px-4">
                   <i class="bi bi-save me-1"></i> Enregistrer
                 </button>
@@ -330,61 +329,108 @@
   <script src="./js/script.js"></script>
   
   <script>
-  // Affichage conditionnel des sections
-  document.querySelectorAll('input[name="dejaTente"]').forEach(input => {
-    input.addEventListener('change', function(e) {
-      document.getElementById('detailsTentative').style.display = 
-        (e.target.value === 'Oui' && e.target.checked) ? 'block' : 'none';
+    // Affichage conditionnel des sections
+    document.querySelectorAll('input[name="dejaTente"]').forEach(input => {
+      input.addEventListener('change', function(e) {
+        document.getElementById('detailsTentative').style.display = 
+          (e.target.value === 'Oui' && e.target.checked) ? 'block' : 'none';
+      });
     });
-  });
-
-  document.querySelectorAll('input[name="intentionMigrer"]').forEach(input => {
-    input.addEventListener('change', function(e) {
-      document.getElementById('detailsIntention').style.display = 
-        (e.target.value === 'Oui' && e.target.checked) ? 'block' : 'none';
+  
+    document.querySelectorAll('input[name="intentionMigrer"]').forEach(input => {
+      input.addEventListener('change', function(e) {
+        document.getElementById('detailsIntention').style.display = 
+          (e.target.value === 'Oui' && e.target.checked) ? 'block' : 'none';
+      });
     });
-  });
-
-  // Barre de progression
-  document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('questionnaireForm');
-    const progressBar = document.getElementById('progressBar');
-    const sections = form.querySelectorAll('div.mb-5');
-    const totalSections = sections.length;
-    
-    function updateProgress() {
-      let completed = 0;
+  
+    // Barre de progression améliorée
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('questionnaireForm');
+      if (!form) return;
+  
+      const progressBar = document.getElementById('progressBar');
+      const sections = form.querySelectorAll('div.mb-5');
+      const totalSections = sections.length;
       
-      sections.forEach(section => {
-        const inputs = section.querySelectorAll('input[required], select[required], textarea[required]');
-        let sectionCompleted = true;
+      function updateProgress() {
+        let completed = 0;
         
-        inputs.forEach(input => {
-          if (input.type === 'checkbox' || input.type === 'radio') {
-            const name = input.name;
-            const checked = form.querySelector(`input[name="${name}"]:checked`);
-            if (!checked) sectionCompleted = false;
-          } else if (!input.value) {
-            sectionCompleted = false;
-          }
+        sections.forEach(section => {
+          const inputs = section.querySelectorAll('input[required], select[required], textarea[required]');
+          let sectionCompleted = true;
+          
+          inputs.forEach(input => {
+            if (input.type === 'checkbox' || input.type === 'radio') {
+              const name = input.name;
+              const checked = form.querySelector(`input[name="${name}"]:checked`);
+              if (!checked) sectionCompleted = false;
+            } else if (!input.value.trim()) {
+              sectionCompleted = false;
+            }
+          });
+          
+          if (sectionCompleted) completed++;
         });
         
-        if (sectionCompleted) completed++;
-      });
+        const progress = Math.round((completed / totalSections) * 100);
+        progressBar.style.width = `${progress}%`;
+        progressBar.setAttribute('aria-valuenow', progress);
+        
+        // Changement de couleur en fonction du progrès
+        if (progress < 30) {
+          progressBar.classList.remove('bg-success', 'bg-warning');
+          progressBar.classList.add('bg-danger');
+        } else if (progress < 70) {
+          progressBar.classList.remove('bg-danger', 'bg-success');
+          progressBar.classList.add('bg-warning');
+        } else {
+          progressBar.classList.remove('bg-danger', 'bg-warning');
+          progressBar.classList.add('bg-success');
+        }
+      }
       
-      const progress = (completed / totalSections) * 100;
-      progressBar.style.width = `${progress}%`;
-    }
-    
-    form.addEventListener('change', updateProgress);
-    form.addEventListener('input', updateProgress);
-  });
-
-  // Menu hamburger
-  document.getElementById('sidebarCollapse').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.toggle('collapsed');
-    document.getElementById('main-content').classList.toggle('expanded');
-  });
+      // Écouteurs d'événements améliorés
+      form.addEventListener('change', updateProgress);
+      form.addEventListener('input', updateProgress);
+      form.addEventListener('reset', () => {
+        progressBar.style.width = '0%';
+        progressBar.classList.remove('bg-success', 'bg-warning');
+        progressBar.classList.add('bg-danger');
+      });
+  
+      // Initialisation au chargement
+      updateProgress();
+  
+      // Menu hamburger amélioré
+      const sidebarCollapse = document.getElementById('sidebarCollapse');
+      if (sidebarCollapse) {
+        sidebarCollapse.addEventListener('click', function() {
+          document.getElementById('sidebar').classList.toggle('collapsed');
+          document.getElementById('main-content').classList.toggle('expanded');
+          
+          // Animation smooth
+          const mainContent = document.getElementById('main-content');
+          mainContent.style.transition = 'margin-left 0.3s ease-in-out';
+        });
+      }
+  
+      // Validation améliorée des champs téléphone
+      const phoneInput = document.querySelector('input[name="telephone"]');
+      if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+          const value = e.target.value.replace(/\D/g, '');
+          e.target.value = value.slice(0, 10);
+        });
+      }
+    });
+  
+    // Gestion de la déconnexion
+    document.getElementById('logout-link')?.addEventListener('click', function(e) {
+      e.preventDefault();
+      sessionStorage.removeItem('daosar_session');
+      window.location.href = 'login.html';
+    });
   </script>
 </body>
 </html>
