@@ -7,10 +7,10 @@ const ESSENTIAL_URLS = [
   '/QuestionnaireMigratoire/index.html',
   '/QuestionnaireMigratoire/dashboard.html',
   '/QuestionnaireMigratoire/parametres.html',
+  '/QuestionnaireMigratoire/login.html',
   OFFLINE_URL,
   '/QuestionnaireMigratoire/css/styles.css',
   '/QuestionnaireMigratoire/js/script.js',
-  '/QuestionnaireMigratoire/js/db.js',
   '/QuestionnaireMigratoire/pwa/icon-192.png',
   '/QuestionnaireMigratoire/pwa/icon-512.png'
 ];
@@ -22,6 +22,9 @@ self.addEventListener('install', (event) => {
       .then((cache) => cache.addAll([
         '/',
         '/QuestionnaireMigratoire/index.html',
+        '/QuestionnaireMigratoire/dashboard.html',
+        '/QuestionnaireMigratoire/parametres.html',
+        '/QuestionnaireMigratoire/login.html',
         '/QuestionnaireMigratoire/offline.html',
         '/QuestionnaireMigratoire/css/styles.css',
         '/QuestionnaireMigratoire/js/script.js',
